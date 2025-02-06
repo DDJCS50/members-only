@@ -1,26 +1,23 @@
 const { Client } = require("pg");
 
 const SQL = `
-CREATE TABLE IF NOT EXISTS categories (
+CREATE TABLE IF NOT EXISTS current_users (
   id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-  name VARCHAR ( 255 ) UNIQUE NOT NULL
+  first_name VARCHAR ( 255 ) NOT NULL,
+  last_name VARCHAR ( 255 ) NOT NULL,
+  username VARCHAR ( 255 ) NOT NULL UNIQUE,
+  password VARCHAR ( 255 ) NOT NULL,
+  membership_status BOOLEAN NOT NULL,
+  admin_status BOOLEAN NOT NULL
 );
 
-INSERT INTO categories (name)
-VALUES 
-  ('Fruit');
-
-CREATE TABLE IF NOT EXISTS items (
+CREATE TABLE IF NOT EXISTS messages (
   id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-  category_id INTEGER REFERENCES categories,
-  name VARCHAR ( 255 ) UNIQUE NOT NULL,
-  description TEXT NOT NULL,
-  price NUMERIC(6, 2) NOT NULL
+  user_id INTEGER REFERENCES current_users,
+  title VARCHAR ( 255 ) NOT NULL,
+  date_created TIMESTAMP NOT NULL,
+  description TEXT NOT NULL
 );
-
-INSERT INTO items (category_id, name, description, price)
-VALUES 
-  (1, 'Apple', 'Shiny apple here', 1.99);
 `;
 
 // Reset table
