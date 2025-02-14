@@ -4,8 +4,10 @@ const indexRouter = Router();
 
 indexRouter.get("/", indexController.indexPageGet);
 indexRouter.get("/sign-up", indexController.signUpGet);
+indexRouter.get("/login", indexController.loginGet);
 
 indexRouter.post("/sign-up", indexController.signUpPost);
+indexRouter.post("/login", indexController.loginPost);
 
 indexRouter.use((req, res, next) => {
   console.log("Route does not exist");

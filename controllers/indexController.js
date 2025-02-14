@@ -1,7 +1,7 @@
 const { body, validationResult, query } = require("express-validator");
 const db = require("../db/queries");
-// const CustomNotFoundError = require("../errors/CustomNotFoundError");
-// const asyncHandler = require("express-async-handler");
+const passport = require("passport");
+const { localStrategy, serializeUser, deserializeUser } = require("./passportController");
 
 const alphaErr = "must only contain letters.";
 const passErr = "must be at least 8 characters long, contain at least one of each: lowercase letter, uppercase letter, number, symbol";
@@ -24,6 +24,27 @@ exports.signUpGet = async (req, res, next) => {
   } catch (err) {
     console.error(err);
     return next(err);
+  }
+};
+
+exports.loginGet = async (req, res, next) => {
+  try {
+    res.render("login");
+  } catch (error) {
+    console.error(error);
+    return next(error);
+  }
+};
+
+exports.loginPost = async (req, res, next) => {
+  try {
+    passport.authenticate("local", {
+      successRedirect: "/",
+      failureRedirect: "/",
+    });
+  } catch (error) {
+    console.error(error);
+    return next(error);
   }
 };
 
