@@ -12,6 +12,7 @@ const passport = require("passport");
 const session = require("express-session");
 
 app.use(session({ secret: "odin", resave: false, saveUninitialized: false }));
+app.use(passport.initialize());
 app.use(passport.session());
 
 mountRoutes(app);

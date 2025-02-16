@@ -1,10 +1,10 @@
 const db = require("../db/index.js");
 
-async function getAllCategories() {
-  const { rows } = await db.query("SELECT * FROM categories");
+async function getUserByUsername(username) {
+  const { rows } = await db.query("SELECT * FROM current_users WHERE username = $1", [username]);
   return rows;
 }
 
 module.exports = {
-  getAllCategories,
+  getUserByUsername,
 };
