@@ -6,19 +6,21 @@ const passport = require("../controllers/passportController");
 indexRouter.get("/", indexController.indexPageGet);
 indexRouter.get("/sign-up", indexController.signUpGet);
 indexRouter.get("/login", indexController.loginGet);
+indexRouter.get("/logout", indexController.logoutGet);
+indexRouter.get("/membership", indexController.membershipGet);
 
+indexRouter.post("/membership", indexController.membershipPost);
 indexRouter.post("/sign-up", indexController.signUpPost);
 indexRouter.post(
   "/login",
   passport.authenticate("MyLocalStrategy", {
-    successRedirect: "/sign-up",
-    failureRedirect: "/sign-up",
+    successRedirect: "/",
+    failureRedirect: "/",
   })
 );
 
 indexRouter.use((req, res, next) => {
   console.log("Route does not exist");
-  console.log(JSON.stringify(req.headers));
   res.status(404).send({
     status: 404,
     message: "Route does not exist",

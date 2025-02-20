@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- <link rel="stylesheet" href="/styles.css"> -->
+  <title>Odin Club</title>
+</head>
+
+<body>
+  <header>
+    <h1>Odin Club</h1>
+  </header>
+  <main>
+    <% if (locals.currentUser) {%>
+      <h1>
+        Welcome Back <%= currentUser.username %>
+      </h1>
+      <a href="/logout">Logout</a>
+      <% } else { %>
+        <h1>Login</h1>
+        <form action="/login" method="POST">
+
+          <div>
+            <label for="username">Username: </label>
+            <input type="text" name="username" id="username">
+          </div>
+          <div>
+            <label for="password">Password: </label>
+            <input type="password" name="password" id="password">
+
+          </div>
+
+          <button type="submit">Login</button>
+        </form>
+        <%}%>
+  </main>
+  <footer>
+    <h3>Copyright 2025 DDJCS50</h3>
+  </footer>
+</body>
+
+</html>

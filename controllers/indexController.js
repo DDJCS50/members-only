@@ -1,5 +1,6 @@
 const { body, validationResult, query } = require("express-validator");
 const db = require("../db/queries");
+const bcrypt = require("bcryptjs");
 
 const alphaErr = "must only contain letters.";
 const passErr = "must be at least 8 characters long, contain at least one of each: lowercase letter, uppercase letter, number, symbol";
@@ -8,15 +9,15 @@ const validateFirstNameInput = [body("firstName").trim().isAlpha("en-US", { igno
 const validateLastNameInput = [body("lastName").trim().isAlpha("en-US", { ignore: " " }).withMessage(`Last name ${alphaErr}`)];
 const validatePassword = [body("password").trim().isStrongPassword().withMessage(`Password ${passErr}`)];
 
-exports.indexPageGet = async (req, res, next) => {
+exports.indexPageGet = (req, res, next) => {
   try {
-    res.send("The index page");
+    res.render("indexPage");
   } catch (err) {
     return next(err);
   }
 };
 
-exports.signUpGet = async (req, res, next) => {
+exports.signUpGet = (req, res, next) => {
   try {
     res.render("signUp");
   } catch (err) {
@@ -25,12 +26,49 @@ exports.signUpGet = async (req, res, next) => {
   }
 };
 
-exports.loginGet = async (req, res, next) => {
+exports.loginGet = (req, res, next) => {
   try {
     res.render("login");
   } catch (error) {
     console.error(error);
     return next(error);
+  }
+};
+
+exports.logoutGet = (req, res, next) => {
+  req.logout((err) => {
+    if (err) {
+      console.error(err);
+      return next(err);
+    }
+    res.redirect("/");
+  });
+};
+
+exports.membershipGet = (req, res, next) => {
+  try {
+    res.render("membership");
+  } catch (err) {
+    console.error(err);
+    return next(err);
+  }
+};
+
+exports.membershipPost = async (req, res, next) => {
+  const selectedUser = req.user;
+  const { membershipSecret } = req.body;
+  const secretCode = "odin";
+
+  if (membershipSecret == secretCode) {
+    await db.updateUserById(selectedUser.id);
+  }
+  console.log(selectedUser);
+
+  try {
+    res.render("membership");
+  } catch (err) {
+    console.error(err);
+    return next(err);
   }
 };
 
@@ -48,12 +86,11 @@ exports.signUpPost = [
       });
     }
 
-    const { firstName, lastName, username, password, adminStatus } = req.body;
+    const { firstName, lastName, username, password, adminStatus, passwordConfirm } = req.body;
 
-    // TODO check the db to see if the db already has that username
-    // CONST USERNAMESELECTED = db.GETUSERNAMEBYNAME(USERNAME)
-    const usernameSelected = [1];
+    const usernameSelected = await db.getUserByUsername(username);
     const usernameError = [{ msg: "Username already exists" }];
+    const passwordError = [{ msg: "Passwords do not match" }];
 
     if (usernameSelected.length > 0) {
       return res.status(400).render("signUp", {
@@ -61,18 +98,20 @@ exports.signUpPost = [
       });
     }
 
+    if (passwordConfirm != password) {
+      return res.status(400).render("signUp", {
+        errors: passwordError,
+      });
+    }
+
     try {
-      res.send("successfully created");
-      // TODO db.INSERTUSER;
-      // res.redirect("/");
+      const hashedPassword = await bcrypt.hash(password, 10);
+      await db.insertUser(firstName, lastName, username, hashedPassword, adminStatus);
+
+      res.redirect("/");
     } catch (err) {
       console.error("Error creating user:", err);
       return next(err);
     }
   },
 ];
-
-// app.use((req, res, next) => {
-//   res.locals.currentUser = req.user;
-//   next();
-// });

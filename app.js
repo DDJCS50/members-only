@@ -11,9 +11,14 @@ app.use(express.static(assetsPath));
 const passport = require("passport");
 const session = require("express-session");
 
-app.use(session({ secret: "odin", resave: false, saveUninitialized: false }));
+app.use(session({ secret: "random gen secret", resave: false, saveUninitialized: false }));
 app.use(passport.initialize());
 app.use(passport.session());
+
+app.use((req, res, next) => {
+  res.locals.currentUser = req.user;
+  next();
+});
 
 mountRoutes(app);
 
