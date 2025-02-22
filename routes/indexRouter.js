@@ -8,7 +8,9 @@ indexRouter.get("/sign-up", indexController.signUpGet);
 indexRouter.get("/login", indexController.loginGet);
 indexRouter.get("/logout", indexController.logoutGet);
 indexRouter.get("/membership", indexController.membershipGet);
+indexRouter.get("/message-create", indexController.messageCreateGet);
 
+indexRouter.post("/message-create", indexController.messageCreatePost);
 indexRouter.post("/membership", indexController.membershipPost);
 indexRouter.post("/sign-up", indexController.signUpPost);
 indexRouter.post(

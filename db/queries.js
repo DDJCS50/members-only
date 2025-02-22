@@ -18,9 +18,14 @@ async function updateUserById(id) {
   await db.query("UPDATE current_users SET membership_status = TRUE WHERE id=($1)", [id]);
 }
 
+async function insertMessageById(id, title, message, date) {
+  await db.query("INSERT INTO messages (user_id, title, description, date_created) VALUES ($1, $2, $3, $4)", [id, title, message, date]);
+}
+
 module.exports = {
   getUserByUsername,
   getUserById,
   insertUser,
   updateUserById,
+  insertMessageById,
 };
