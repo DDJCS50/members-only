@@ -11,9 +11,13 @@ const validateLastNameInput = [body("lastName").trim().isAlpha("en-US", { ignore
 const validatePassword = [body("password").trim().isStrongPassword().withMessage(`Password ${passErr}`)];
 const validateMessage = [body("message").trim().isAscii().withMessage(`Message ${messageErr}`)];
 
-exports.indexPageGet = (req, res, next) => {
+exports.indexPageGet = async (req, res, next) => {
+  const messages = await db.getMessages();
+  console.log(messages);
+  console.log(res.locals.currentUser);
+
   try {
-    res.render("indexPage");
+    res.render("indexPage", { messages: messages });
   } catch (err) {
     return next(err);
   }

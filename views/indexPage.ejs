@@ -18,25 +18,64 @@
         Welcome Back <%= currentUser.username %>
       </h1>
       <a href="/message-create">Create Message</a>
-      <br>
-      <a href="/logout">Logout</a>
-      <% } else { %>
-        <h1>Login</h1>
-        <form action="/login" method="POST">
+      <h2>Message Board:</h2>
+      <% if (locals.messages) {%>
+        <% if (locals.currentUser.membership_status==true) {%>
+          <ul>
+            <% messages.forEach((message)=> { %>
+              <!-- Username:
+              <%= message.username %>
+                <br> -->
+              <li>
+                Title:
+                <%= message.title %>
+                  <br>
+                  Message:
+                  <%= message.description %>
+                    <br>
+                    Added:
+                    <%= message.date_created %>
+                      <br>
 
-          <div>
-            <label for="username">Username: </label>
-            <input type="text" name="username" id="username">
-          </div>
-          <div>
-            <label for="password">Password: </label>
-            <input type="password" name="password" id="password">
+              </li>
+              <% }); %>
+          </ul>
+          <%} else {%>
 
-          </div>
+            <ul>
+              <% messages.forEach((message)=> { %>
+                <li>
+                  Title:
+                  <%= message.title %>
+                    <br>
+                    Message:
+                    <%= message.description %>
+                      <br>
 
-          <button type="submit">Login</button>
-        </form>
-        <%}%>
+                </li>
+                <% }); %>
+            </ul>
+            <%}%>
+              <%}%>
+                <br>
+                <a href="/logout">Logout</a>
+                <% } else { %>
+                  <h1>Login</h1>
+                  <form action="/login" method="POST">
+
+                    <div>
+                      <label for="username">Username: </label>
+                      <input type="text" name="username" id="username">
+                    </div>
+                    <div>
+                      <label for="password">Password: </label>
+                      <input type="password" name="password" id="password">
+
+                    </div>
+
+                    <button type="submit">Login</button>
+                  </form>
+                  <%}%>
   </main>
   <footer>
     <h3>Copyright 2025 DDJCS50</h3>
