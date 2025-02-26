@@ -23,8 +23,17 @@ async function insertMessageById(id, title, message, date) {
 }
 
 async function getMessages() {
-  const { rows } = await db.query("SELECT * FROM messages");
+  const { rows } = await db.query("SELECT messages.id, messages.user_id, title, date_created, description, first_name, last_name, username, membership_status, admin_status FROM messages JOIN current_users ON current_users.id=messages.user_id");
   return rows;
+}
+
+async function getMessageById(searchedId) {
+  const { rows } = await db.query("SELECT * FROM messages WHERE id=($1)", [searchedId]);
+  return rows;
+}
+
+async function deleteMessageById(messageId) {
+  await db.query("DELETE FROM messages WHERE id=($1)", [messageId]);
 }
 
 module.exports = {
@@ -34,4 +43,6 @@ module.exports = {
   updateUserById,
   insertMessageById,
   getMessages,
+  getMessageById,
+  deleteMessageById,
 };

@@ -13,8 +13,6 @@ const validateMessage = [body("message").trim().isAscii().withMessage(`Message $
 
 exports.indexPageGet = async (req, res, next) => {
   const messages = await db.getMessages();
-  console.log(messages);
-  console.log(res.locals.currentUser);
 
   try {
     res.render("indexPage", { messages: messages });
@@ -69,6 +67,34 @@ exports.messageCreateGet = (req, res, next) => {
   }
 };
 
+exports.messageDeletePost = async (req, res) => {
+  const messageId = req.params.id;
+
+  const messageNotFoundErr = [{ msg: "Message not found" }];
+
+  if (messageId == undefined || messageId == null) {
+    return res.status(400).render("indexPage", {
+      errors: messageNotFoundErr,
+    });
+  }
+
+  const selectedMessage = await db.getMessageById(Number(messageId));
+
+  if (selectedMessage == undefined || selectedMessage == null) {
+    return res.status(400).render("indexPage", {
+      errors: messageNotFoundErr,
+    });
+  }
+
+  await db.deleteMessageById(selectedMessage[0].id);
+  try {
+    res.redirect("/");
+  } catch (err) {
+    console.error(err);
+    return next(err);
+  }
+};
+
 exports.messageCreatePost = [
   validateMessage,
   async (req, res, next) => {
@@ -98,7 +124,7 @@ exports.messageCreatePost = [
     await db.insertMessageById(selectedUser.id, title, message, currentDate);
 
     try {
-      res.render("message-create");
+      res.redirect("/");
     } catch (err) {
       console.error(err);
       return next(err);
@@ -114,10 +140,9 @@ exports.membershipPost = async (req, res, next) => {
   if (membershipSecret == secretCode) {
     await db.updateUserById(selectedUser.id);
   }
-  console.log(selectedUser);
 
   try {
-    res.render("membership");
+    res.redirect("/");
   } catch (err) {
     console.error(err);
     return next(err);
@@ -138,7 +163,11 @@ exports.signUpPost = [
       });
     }
 
-    const { firstName, lastName, username, password, adminStatus, passwordConfirm } = req.body;
+    let { firstName, lastName, username, password, adminStatus, passwordConfirm } = req.body;
+
+    if (adminStatus == undefined || adminStatus == null) {
+      adminStatus = false;
+    }
 
     const usernameSelected = await db.getUserByUsername(username);
     const usernameError = [{ msg: "Username already exists" }];
